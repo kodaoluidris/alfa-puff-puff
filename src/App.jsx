@@ -157,7 +157,7 @@ function App() {
           </a>
 
           <p className="contact-numbers">
-            Or call: <a href="tel:+2348036857203">0803 685 7203</a> · <a href="tel:+2348029305994">0802 930 5994</a> · <a href="tel:+2347054172171">0705 417 2171</a>
+            Or call: <a href="tel:+2348036857203">0803 685 7203</a> · <a href="tel:+2347054172171">0705 417 2171</a>
           </p>
 
           <p className="slogan">A trial will surely convince you.</p>
