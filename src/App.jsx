@@ -1,13 +1,47 @@
-import { useRef } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import './App.css'
+
+function useInView(options = {}) {
+  const ref = useRef(null)
+  const [isInView, setIsInView] = useState(false)
+  const { rootMargin = '0px 0px -60px 0px', threshold = 0.1 } = options
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) setIsInView(true)
+      },
+      { rootMargin, threshold }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [rootMargin, threshold])
+
+  return [ref, isInView]
+}
+
+function AnimateIn({ children, className = '', animation = 'slideUp', delay = 0, as: Tag = 'div' }) {
+  const [ref, isInView] = useInView()
+  return (
+    <Tag
+      ref={ref}
+      className={`animate-in animate-${animation} ${isInView ? 'is-visible' : ''} ${className}`.trim()}
+      style={{ transitionDelay: delay ? `${delay}ms` : undefined }}
+    >
+      {children}
+    </Tag>
+  )
+}
 
 import logoImg from '../assets/logo.png'
 import heroImage from '../assets/ChatGPT Image Feb 23, 2026, 10_58_25 AM.png'
 import puffPuffImg from '../assets/puffpuff.webp'
 import bunsImg from '../assets/buns.jpeg'
-import eggRollImg from '../assets/eggroll.jpeg'
-import doughnutImg from '../assets/06dc9c0b5e79e814d64b62bc673dc843.jpg'
-import meatPieImg from '../assets/meatpie.webp'
+import eggRollImg from '../assets/african-egg-roll-26.png'
+import doughnutImg from '../assets/No-Yeast-Doughnuts-1536x864.jpg'
+import meatPieImg from '../assets/meatpie.jpeg'
 import sausageRollImg from '../assets/sussageroll.jpeg'
 import fishRollImg from '../assets/fishroll.jpg'
 import aboutImage from '../assets/3c101a961c80239c54d154326fb96498.jpg'
@@ -74,10 +108,13 @@ function App() {
       {/* About */}
       <section className="section about" id="about">
         <div className="container about-container">
-          <h2 className="section-title">About Us</h2>
+          <AnimateIn animation="slideUp">
+            <h2 className="section-title">About Us</h2>
+          </AnimateIn>
           <div className="about-grid">
-            <div className="about-content">
-              <p className="about-lead">
+            <AnimateIn animation="slideRight" delay={100}>
+              <div className="about-content">
+                <p className="about-lead">
                 At ALFA PUFF PUFF, we believe the best moments are shared over great food. What started as a love for homemade snacks and pastries has grown into a small business built on quality, freshness, and that first bite that keeps people coming back.
               </p>
               <p className="about-body">
@@ -86,10 +123,13 @@ function App() {
               <p className="about-close">
                 <strong>Snacks and small chops at affordable prices.</strong> A trial will surely convince you.
               </p>
-            </div>
-            <div className="about-image-wrap">
-              <img src={aboutImage} alt="ALFA PUFF PUFF — fresh small chops and pastries" className="about-image" />
-            </div>
+              </div>
+            </AnimateIn>
+            <AnimateIn animation="slideLeft" delay={150}>
+              <div className="about-image-wrap">
+                <img src={aboutImage} alt="ALFA PUFF PUFF — fresh small chops and pastries" className="about-image" />
+              </div>
+            </AnimateIn>
           </div>
         </div>
       </section>
@@ -97,11 +137,13 @@ function App() {
       {/* Our Services */}
       <section className="section services" id="services">
         <div className="container">
-          <h2 className="section-title">Our Services</h2>
-          <p className="section-intro">We offer a full range of small chops and pastries, made to order for you and your guests.</p>
+          <AnimateIn animation="slideUp">
+            <h2 className="section-title">Our Services</h2>
+            <p className="section-intro">We offer a full range of small chops and pastries, made to order for you and your guests.</p>
+          </AnimateIn>
           <ul className="services-grid">
             {services.map((item, i) => (
-              <li key={i} className="service-card">
+              <AnimateIn key={i} as="li" className="service-card" animation="slideUp" delay={80 * i}>
                 <div className="service-card-image-wrap">
                   <img src={item.image} alt={item.name} className="service-card-image" />
                 </div>
@@ -109,7 +151,7 @@ function App() {
                   <h3>{item.name}</h3>
                   <p>{item.desc}</p>
                 </div>
-              </li>
+              </AnimateIn>
             ))}
           </ul>
         </div>
@@ -119,14 +161,18 @@ function App() {
       <section className="section events" id="events">
         <div className="events-bg" />
         <div className="container events-container">
-          <div className="events-header">
-            <h2 className="events-title">Event Catering</h2>
-            <p className="events-tagline">We specialise in packaging small chops for your events</p>
-            <p className="events-intro">Whether it’s a small gathering or a big celebration, we’ve got you covered.</p>
-          </div>
+          <AnimateIn animation="slideUp">
+            <div className="events-header">
+              <h2 className="events-title">Event Catering</h2>
+              <p className="events-tagline">We specialise in packaging small chops for your events</p>
+              <p className="events-intro">Whether it’s a small gathering or a big celebration, we’ve got you covered.</p>
+            </div>
+          </AnimateIn>
           <ul className="events-list">
             {events.map((event, i) => (
-              <li key={i} className="event-item"><span className="event-bullet" />{event}</li>
+              <AnimateIn key={i} as="li" className="event-item" animation="fadeIn" delay={60 * i}>
+                <span className="event-bullet" />{event}
+              </AnimateIn>
             ))}
           </ul>
         </div>
@@ -135,9 +181,11 @@ function App() {
       {/* Contact */}
       <section className="section contact" id="contact" ref={contactRef}>
         <div className="container">
-          <h2 className="section-title">Contact us</h2>
-          <p className="section-intro">Reach out on WhatsApp for orders, quotes, or event enquiries. We’re just a message away.</p>
-
+          <AnimateIn animation="slideUp">
+            <h2 className="section-title">Contact us</h2>
+            <p className="section-intro">Reach out on WhatsApp for orders, quotes, or event enquiries. We’re just a message away.</p>
+          </AnimateIn>
+          <AnimateIn animation="slideUp" delay={100}>
           <a
             href={WHATSAPP_LINK}
             target="_blank"
@@ -157,10 +205,11 @@ function App() {
           </a>
 
           <p className="contact-numbers">
-            Or call: <a href="tel:+2348036857203">0803 685 7203</a> · <a href="tel:+2347054172171">0705 417 2171</a>
+            Or call: <a href="tel:+2348036857203">0803 685 7203</a> · <a href="tel:+2348029305994">0802 930 5994</a> · <a href="tel:+2347054172171">0705 417 2171</a>
           </p>
 
           <p className="slogan">A trial will surely convince you.</p>
+          </AnimateIn>
         </div>
       </section>
 

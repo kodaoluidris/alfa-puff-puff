@@ -715,3 +715,48 @@
     text-align: center;
   }
 }
+
+/* Scroll-triggered animations */
+.animate-in {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.animate-in.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.animate-slideUp {
+  transform: translateY(28px);
+}
+
+.animate-slideUp.is-visible {
+  transform: translateY(0);
+}
+
+.animate-slideLeft {
+  transform: translateX(40px);
+}
+
+.animate-slideLeft.is-visible {
+  transform: translateX(0);
+}
+
+.animate-slideRight {
+  transform: translateX(-40px);
+}
+
+.animate-slideRight.is-visible {
+  transform: translateX(0);
+}
+
+.animate-fadeIn {
+  transform: none;
+  opacity: 0;
+}
+
+.animate-fadeIn.is-visible {
+  opacity: 1;
+}
